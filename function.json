@@ -1,0 +1,122 @@
+{
+  "type": "vector.function",
+  "input_schema": {
+    "type": "array",
+    "description": "An array of cat photos to be ranked",
+    "minItems": 2,
+    "maxItems": 100,
+    "items": {
+      "type": "object",
+      "description": "A cat photo with its URL and optional metadata",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The URL or file path to the cat photo image"
+        },
+        "title": {
+          "type": "string",
+          "description": "An optional title or label for the photo"
+        },
+        "photographer": {
+          "type": "string",
+          "description": "An optional credit to the photographer"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  },
+  "output_length": {
+    "$starlark": "len(input)"
+  },
+  "input_split": {
+    "$starlark": "[[photo] for photo in input]"
+  },
+  "input_merge": {
+    "$starlark": "[photo_array[0] for photo_array in input]"
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Share an example of a cat photo where the background colors and tones beautifully complement the cat's appearance, creating a unified and harmonious aesthetic experience."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"image_url\", \"image_url\": {\"url\": photo[\"url\"]}}] for photo in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Show me a cat photo where the cat is unmistakably the primary focal point, with the viewer's eye naturally drawn to the subject as the main attraction, free from competing visual distractions."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"image_url\", \"image_url\": {\"url\": photo[\"url\"]}}] for photo in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Share a cat photo where the surrounding environment reveals something meaningful about the cat—its personality, habitat, lifestyle, or emotional state. The context should enrich our understanding of the cat."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"image_url\", \"image_url\": {\"url\": photo[\"url\"]}}] for photo in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Show me a cat photo that demonstrates intentional compositional choices, where the photographer clearly positioned the cat and framed the environment to create meaningful visual relationships and support the cat as the subject."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"image_url\", \"image_url\": {\"url\": photo[\"url\"]}}] for photo in input]"
+      },
+      "output": {
+        "$starlark": "output[\"scores\"]"
+      }
+    }
+  ],
+  "description": "Ranks cat photographs based on how well their backgrounds and environments support the cat as the primary subject. Evaluates visual harmony, subject prominence, contextual meaning, and compositional intent to identify photos where every element enhances rather than distracts from the cat."
+}
